@@ -12,10 +12,10 @@ artifact that another learner can run, inspect, and explain.
 
 1. Trigonometry and the unit circle
 2. Vectors and coordinate components
-3. Rotation matrices
-4. One-link forward kinematics
-5. Local and World coordinate frames
-6. Multiple Origins and two-link forward kinematics
+3. One-link forward kinematics
+4. Local and World coordinate frames
+5. Multiple Origins and two-link forward kinematics
+6. Rotation matrices as local-vector-to-World-vector transforms
 
 ## First artifact: one-link planar arm
 
@@ -107,6 +107,21 @@ Two Sliders update both links, both local frames, elbow and wrist World
 coordinates, and the vector addition used by two-link forward kinematics.
 Cases A through D provide the representative angle combinations used in the
 Notebook questions.
+
+## Fourth artifact: rotation matrices as frame transforms
+
+This lesson connects the earlier diagrams to one reusable calculation:
+`v_world = R(theta) @ v_local`. A link remains `[L, 0]` in its own frame; the
+rotation matrix expresses that same physical vector with World components.
+
+```bash
+jupyter lab notebooks/04_rotation_matrix_as_frame_transform.ipynb
+```
+
+The opening comparison shows the same ruler from a ruler-mounted camera and a
+desk-mounted camera: `[L, 0]` stays fixed on the ruler while its horizontal and
+vertical desk components change. The following figures connect that observation
+to the matrix form and then add two transformed link vectors head-to-tail.
 
 ## Repository structure
 
