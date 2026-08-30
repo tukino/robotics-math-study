@@ -14,7 +14,8 @@
 2. ベクトルと座標成分
 3. 回転行列
 4. 1リンクアームの順運動学
-5. 2リンクアームの順運動学
+5. ローカル座標系とWorld座標系
+6. 複数Originと2リンクアームの順運動学
 
 ## 最初のArtifact：1リンク平面アーム
 
@@ -87,6 +88,21 @@ Sliderと代表角度ボタンで0°、30°、45°、90°を確認できます�
 ```bash
 jupyter lab notebooks/02_local_and_world_frames.ipynb
 ```
+
+## 3つ目のArtifact：2リンクアームの複数Origin
+
+2リンクの学習例では、固定されたWorld座標系と、肩・肘のローカル座標系を比較します。
+肘は自分の座標系では常に`(0, 0)`ですが、World上の位置は`theta1`によって変わります。
+Worldから見た前腕の角度は、相対角度の和`theta1 + theta2`です。
+
+```bash
+python -m robotics_math_study.two_link_frames
+jupyter lab notebooks/03_multiple_origins_and_frames.ipynb
+```
+
+2本のSliderは、両リンク、両ローカル座標系、肘・手首のWorld座標、2リンク順運動学の
+ベクトル加算を更新します。Case A〜Dから、Notebookの確認問題で使う代表的な角度の
+組み合わせへ切り替えられます。
 
 ## リポジトリ構成
 

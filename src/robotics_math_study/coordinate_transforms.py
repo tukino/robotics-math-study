@@ -44,7 +44,10 @@ def local_to_world(
     """
     point = np.asarray(point_local, dtype=float)
     if point.shape != (2,) or not np.all(np.isfinite(point)):
-        raise ValueError("point_local must contain two finite values / ローカル座標は2つの有限値にしてください")
+        raise ValueError(
+            "point_local must contain two finite values / "
+            "ローカル座標は2つの有限値にしてください"
+        )
 
     rotation = rotation_matrix_2d(theta_deg)
 
@@ -61,3 +64,14 @@ def local_to_world(
     # 移動先がRの第2列になります。
     point_world = rotation @ point
     return point_world
+
+
+def frame_axes_world(theta_world_deg: float) -> tuple[NDArray[np.float64], NDArray[np.float64]]:
+    """Return local x and y unit-axis directions expressed in World.
+
+    ローカルx、y単位軸の向きをWorld座標で返します。
+    """
+    rotation = rotation_matrix_2d(theta_world_deg)
+    local_x = np.array([1.0, 0.0])
+    local_y = np.array([0.0, 1.0])
+    return rotation @ local_x, rotation @ local_y

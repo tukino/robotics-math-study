@@ -14,7 +14,8 @@ artifact that another learner can run, inspect, and explain.
 2. Vectors and coordinate components
 3. Rotation matrices
 4. One-link forward kinematics
-5. Two-link forward kinematics
+5. Local and World coordinate frames
+6. Multiple Origins and two-link forward kinematics
 
 ## First artifact: one-link planar arm
 
@@ -89,6 +90,23 @@ The same lesson is available as a Notebook:
 ```bash
 jupyter lab notebooks/02_local_and_world_frames.ipynb
 ```
+
+## Third artifact: multiple Origins on a two-link arm
+
+The two-link lesson compares one fixed World frame with shoulder and elbow
+local frames. The elbow remains `(0, 0)` in its own frame while its World
+position changes with `theta1`. The forearm angle in World is the relative
+angle sum `theta1 + theta2`.
+
+```bash
+python -m robotics_math_study.two_link_frames
+jupyter lab notebooks/03_multiple_origins_and_frames.ipynb
+```
+
+Two Sliders update both links, both local frames, elbow and wrist World
+coordinates, and the vector addition used by two-link forward kinematics.
+Cases A through D provide the representative angle combinations used in the
+Notebook questions.
 
 ## Repository structure
 
