@@ -69,11 +69,32 @@ the known link length and joint angle. It converts them into the endpoint
 `(x, y)` using `L*cos(θ)` and `L*sin(θ)`. The Matplotlib code only visualizes
 that result and updates the artists when the angle changes.
 
+## Second artifact: local and world coordinate frames
+
+The coordinate-frame lesson keeps the world axes `X, Y` fixed while the local
+axes `x', y'` rotate with the arm. It transforms the local basis points with
+`P_world = R(theta) @ P_local` and displays both local and world coordinates.
+
+```bash
+python examples/visualize_local_world_frames.py
+```
+
+The Slider and preset buttons show 0°, 30°, 45°, and 90°. The red point is the
+world destination of local `(1, 0)`, which is the first column of the rotation
+matrix. The green point is the destination of local `(0, 1)`, which is the
+second column.
+
+The same lesson is available as a Notebook:
+
+```bash
+jupyter lab notebooks/02_local_and_world_frames.ipynb
+```
+
 ## Repository structure
 
 ```text
 robotics-math-study/
-├── examples/                  # Small numerical verification scripts
+├── examples/                  # Numerical checks and interactive lessons
 ├── notebooks/                 # Interactive, executable experiments
 ├── notes/                     # Explanations written in our own words
 ├── src/robotics_math_study/   # Kinematics and visualization modules

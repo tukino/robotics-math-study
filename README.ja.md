@@ -68,11 +68,31 @@ Notebookでは、ボタンに加えて `visualizer.set_angle(30)`、
 受け取ります。それらを`L*cos(θ)`と`L*sin(θ)`で先端座標`(x, y)`へ変換します。
 Matplotlib側はその結果を可視化し、角度変更時に描画要素を更新しているだけです。
 
+## 2つ目のArtifact：ローカル座標系と世界座標系
+
+座標系の学習例では、世界座標軸`X, Y`を固定したまま、ローカル座標軸`x', y'`が
+アームと一緒に回転します。ローカル基底点を`P_world = R(theta) @ P_local`で変換し、
+ローカル座標と世界座標の両方を表示します。
+
+```bash
+python examples/visualize_local_world_frames.py
+```
+
+Sliderと代表角度ボタンで0°、30°、45°、90°を確認できます。赤い点はローカル
+`(1, 0)`の世界座標での移動先で、回転行列の第1列です。緑の点はローカル
+`(0, 1)`の移動先で、回転行列の第2列です。
+
+同じ学習例をNotebookでも実行できます。
+
+```bash
+jupyter lab notebooks/02_local_and_world_frames.ipynb
+```
+
 ## リポジトリ構成
 
 ```text
 robotics-math-study/
-├── examples/                  # 小さな数値確認スクリプト
+├── examples/                  # 数値確認と対話的な学習例
 ├── notebooks/                 # 対話的で実行可能な実験
 ├── notes/                     # 自分の言葉で書いた説明
 ├── src/robotics_math_study/   # 順運動学と可視化のモジュール
