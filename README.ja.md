@@ -24,7 +24,9 @@ $$
 x = L\cos(\theta), \qquad y = L\sin(\theta).
 $$
 
-同梱のPythonモジュールは、この手先位置を計算してアームを可視化します。
+同梱のPythonモジュールは、この手先位置を計算してMatplotlibでアームを可視化します。
+0〜360°のSliderを動かすと、アーム、先端、成分補助線、数値がリアルタイムで更新
+されます。ボタンから30°、45°、90°へ直接切り替えられます。
 
 ```text
 角度 θ -> sin/cosによる成分分解 -> 手先位置 (x, y) -> 可視化
@@ -37,7 +39,8 @@ Python 3.11以降を推奨します。
 ```bash
 python -m venv .venv
 python -m pip install -e .
-python -m robotics_math_study.one_link_arm --angle-deg 45 --save artifacts/one_link_arm.svg
+python -m robotics_math_study.one_link_arm
+python examples/verify_one_link_angles.py
 python -m unittest discover -s tests
 ```
 
@@ -45,16 +48,34 @@ python -m unittest discover -s tests
 PowerShellでは `.venv\Scripts\Activate.ps1`、macOSまたはLinuxでは
 `source .venv/bin/activate` を実行します。
 
-このコマンドは手先位置を表示し、SVG可視化を保存します。実行時にはPython標準
-ライブラリ以外の依存関係を使用しません。
+最初のコマンドは対話的なMatplotlibウィンドウを開きます。数値確認スクリプトは
+30°、45°、90°の先端座標を表示するため、図と比較できます。
+
+対話的なJupyter Notebookを使う場合は、次を実行します。
+
+```bash
+python -m pip install -e ".[notebook]"
+jupyter lab notebooks/01_one_link_forward_kinematics.ipynb
+```
+
+Notebookでは、ボタンに加えて `visualizer.set_angle(30)`、
+`visualizer.set_angle(45)`、`visualizer.set_angle(90)` のようにコードから
+代表角度へ切り替えられます。
+
+## 順運動学に相当する場所
+
+`forward_kinematics_1link()`が順運動学の計算です。既知のリンク長と関節角を
+受け取ります。それらを`L*cos(θ)`と`L*sin(θ)`で先端座標`(x, y)`へ変換します。
+Matplotlib側はその結果を可視化し、角度変更時に描画要素を更新しているだけです。
 
 ## リポジトリ構成
 
 ```text
 robotics-math-study/
-├── notebooks/                 # 実行可能な探索・実験
+├── examples/                  # 小さな数値確認スクリプト
+├── notebooks/                 # 対話的で実行可能な実験
 ├── notes/                     # 自分の言葉で書いた説明
-├── src/robotics_math_study/   # 再利用可能な実装
+├── src/robotics_math_study/   # 順運動学と可視化のモジュール
 └── tests/                     # 数学的な振る舞いの小さな検証
 ```
 

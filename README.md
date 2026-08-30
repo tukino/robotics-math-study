@@ -24,7 +24,9 @@ $$
 x = L\cos(\theta), \qquad y = L\sin(\theta).
 $$
 
-The included Python module calculates this endpoint and visualizes the arm.
+The included Python module calculates this endpoint and visualizes the arm with
+Matplotlib. A 0–360° Slider updates the arm, endpoint, component lines, and
+numeric values in real time. Buttons jump directly to 30°, 45°, and 90°.
 
 ```text
 angle θ -> sin/cos components -> endpoint (x, y) -> visualization
@@ -37,7 +39,8 @@ Python 3.11 or later is recommended.
 ```bash
 python -m venv .venv
 python -m pip install -e .
-python -m robotics_math_study.one_link_arm --angle-deg 45 --save artifacts/one_link_arm.svg
+python -m robotics_math_study.one_link_arm
+python examples/verify_one_link_angles.py
 python -m unittest discover -s tests
 ```
 
@@ -45,16 +48,35 @@ Activate the virtual environment before installing if you want to keep the
 dependencies isolated. On PowerShell, run `.venv\Scripts\Activate.ps1`; on
 macOS or Linux, run `source .venv/bin/activate`.
 
-The command prints the endpoint and writes an SVG visualization. The project
-uses only the Python standard library at runtime.
+The first command opens the interactive Matplotlib window. The verification
+script prints the endpoints for 30°, 45°, and 90° so that they can be compared
+with the figure.
+
+For the interactive Jupyter Notebook:
+
+```bash
+python -m pip install -e ".[notebook]"
+jupyter lab notebooks/01_one_link_forward_kinematics.ipynb
+```
+
+In the Notebook, `visualizer.set_angle(30)`, `visualizer.set_angle(45)`, and
+`visualizer.set_angle(90)` provide the same preset-angle behavior as the buttons.
+
+## Where the forward kinematics is
+
+`forward_kinematics_1link()` is the forward-kinematics calculation. It receives
+the known link length and joint angle. It converts them into the endpoint
+`(x, y)` using `L*cos(θ)` and `L*sin(θ)`. The Matplotlib code only visualizes
+that result and updates the artists when the angle changes.
 
 ## Repository structure
 
 ```text
 robotics-math-study/
-├── notebooks/                 # Exploratory, executable experiments
+├── examples/                  # Small numerical verification scripts
+├── notebooks/                 # Interactive, executable experiments
 ├── notes/                     # Explanations written in our own words
-├── src/robotics_math_study/   # Reusable implementations
+├── src/robotics_math_study/   # Kinematics and visualization modules
 └── tests/                     # Small checks for mathematical behavior
 ```
 

@@ -8,4 +8,12 @@ version = "0.1.0"
 description = "Reproducible experiments for learning robotics mathematics"
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = []
+dependencies = [
+    "matplotlib>=3.8",
+]
+
+[project.optional-dependencies]
+notebook = [
+    "ipympl>=0.9",
+    "jupyterlab>=4.0",
+]

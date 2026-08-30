@@ -1,66 +1,220 @@
-"""One-link planar arm kinematics. / 1リンク平面アームの運動学。"""
+"""Interactive one-link planar-arm visualization. / 1リンク平面アームの対話的可視化。"""
 
 from __future__ import annotations
 
 import argparse
 import math
 from collections.abc import Sequence
-from pathlib import Path
+
+import matplotlib.pyplot as plt
+from matplotlib import font_manager
+from matplotlib.patches import Circle
+from matplotlib.widgets import Button, Slider
+
+from .kinematics import forward_kinematics_1link
 
 
-def endpoint(angle_radians: float, length: float = 1.0) -> tuple[float, float]:
-    """Return the endpoint for a joint angle and link length.
+def _configure_japanese_font() -> None:
+    """Use an installed Japanese font when one is available.
 
-    関節角とリンク長から手先位置を返します。
+    利用可能な日本語フォントがある場合は描画に使用します。
     """
-    if not math.isfinite(angle_radians):
-        raise ValueError("angle_radians must be finite / 有限の角度を指定してください")
-    if not math.isfinite(length) or length <= 0:
-        raise ValueError("length must be positive and finite / リンク長は正の有限値にしてください")
+    installed_fonts = {font.name for font in font_manager.fontManager.ttflist}
+    for candidate in ("Meiryo", "Yu Gothic", "BIZ UDPGothic", "Noto Sans JP", "MS Gothic"):
+        if candidate in installed_fonts:
+            plt.rcParams["font.family"] = [candidate, "DejaVu Sans"]
+            return
 
-    return length * math.cos(angle_radians), length * math.sin(angle_radians)
 
+class OneLinkArmVisualizer:
+    """Visualize how a joint angle determines a one-link arm endpoint.
 
-def render_svg(angle_radians: float, length: float = 1.0, canvas_size: int = 600) -> str:
-    """Return an SVG visualization of a one-link planar arm.
-
-    1リンク平面アームを可視化したSVG文字列を返します。
+    関節角が1リンクアームの先端位置を決める関係を可視化します。
     """
-    x, y = endpoint(angle_radians, length)
-    if canvas_size < 200:
-        raise ValueError("canvas_size must be at least 200 / 画像サイズは200以上にしてください")
 
-    center = canvas_size / 2
-    scale = canvas_size * 0.35 / length
-    endpoint_x = center + x * scale
-    endpoint_y = center - y * scale
-    angle_degrees = math.degrees(angle_radians)
+    def __init__(self, link_length: float = 10.0, initial_angle_deg: float = 30.0) -> None:
+        """Create the figure, angle slider, and preset-angle buttons.
 
-    return f"""<svg xmlns="http://www.w3.org/2000/svg" width="{canvas_size}" height="{canvas_size}" viewBox="0 0 {canvas_size} {canvas_size}">
-  <rect width="100%" height="100%" fill="#f8fafc"/>
-  <line x1="40" y1="{center}" x2="{canvas_size - 40}" y2="{center}" stroke="#94a3b8" stroke-width="2"/>
-  <line x1="{center}" y1="{canvas_size - 40}" x2="{center}" y2="40" stroke="#94a3b8" stroke-width="2"/>
-  <text x="{canvas_size - 55}" y="{center - 10}" fill="#475569" font-family="sans-serif">x</text>
-  <text x="{center + 10}" y="55" fill="#475569" font-family="sans-serif">y</text>
-  <line x1="{center}" y1="{center}" x2="{endpoint_x}" y2="{endpoint_y}" stroke="#2563eb" stroke-width="10" stroke-linecap="round"/>
-  <circle cx="{center}" cy="{center}" r="12" fill="#0f172a"/>
-  <circle cx="{endpoint_x}" cy="{endpoint_y}" r="12" fill="#f97316"/>
-  <text x="24" y="34" fill="#0f172a" font-size="20" font-family="sans-serif">One-link arm / 1リンクアーム</text>
-  <text x="24" y="62" fill="#334155" font-size="16" font-family="sans-serif">θ = {angle_degrees:.1f}°, L = {length:g}</text>
-  <text x="{endpoint_x + 14}" y="{endpoint_y - 14}" fill="#9a3412" font-size="16" font-family="sans-serif">({x:.3f}, {y:.3f})</text>
-</svg>
-"""
+        図、角度Slider、代表角度ボタンを作成します。
+        """
+        # Validate the initial values with the same calculation used by updates.
+        # 更新時と同じ座標計算を使って初期値も検証します。
+        forward_kinematics_1link(link_length, initial_angle_deg)
+        if not 0.0 <= initial_angle_deg <= 360.0:
+            raise ValueError("initial_angle_deg must be from 0 to 360 / 初期角度は0〜360度にしてください")
 
+        self.link_length = link_length
+        _configure_japanese_font()
+        self.figure, self.axes = plt.subplots(figsize=(9, 8))
+        self.figure.subplots_adjust(bottom=0.25)
+        self._configure_axes()
 
-def save_svg(path: str | Path, angle_radians: float, length: float = 1.0) -> Path:
-    """Write an SVG visualization and return its path.
+        x, y = forward_kinematics_1link(self.link_length, initial_angle_deg)
+        (self.arm_line,) = self.axes.plot(
+            [0.0, x],
+            [0.0, y],
+            color="tab:blue",
+            linewidth=5,
+            label="arm vector / アームベクトル",
+            zorder=4,
+        )
+        (self.x_component_line,) = self.axes.plot(
+            [0.0, x],
+            [0.0, 0.0],
+            "--",
+            color="tab:orange",
+            linewidth=2,
+            label="x = L cos(θ)",
+            zorder=3,
+        )
+        (self.y_component_line,) = self.axes.plot(
+            [x, x],
+            [0.0, y],
+            "--",
+            color="tab:green",
+            linewidth=2,
+            label="y = L sin(θ)",
+            zorder=3,
+        )
+        (self.joint_point,) = self.axes.plot(
+            0.0,
+            0.0,
+            "o",
+            color="black",
+            markersize=10,
+            label="joint / 関節",
+            zorder=5,
+        )
+        (self.endpoint_point,) = self.axes.plot(
+            x,
+            y,
+            "o",
+            color="tab:red",
+            markersize=10,
+            label="endpoint / 先端",
+            zorder=5,
+        )
 
-    SVG可視化を書き込み、そのパスを返します。
-    """
-    output_path = Path(path)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(render_svg(angle_radians, length), encoding="utf-8")
-    return output_path
+        self.info_text = self.axes.text(
+            0.02,
+            0.98,
+            "",
+            transform=self.axes.transAxes,
+            verticalalignment="top",
+            fontfamily="monospace",
+            fontsize=11,
+            bbox={"boxstyle": "round", "facecolor": "white", "alpha": 0.9},
+        )
+        self.endpoint_text = self.axes.annotate(
+            "",
+            xy=(x, y),
+            xytext=(8, 8),
+            textcoords="offset points",
+            color="tab:red",
+        )
+
+        slider_axes = self.figure.add_axes((0.18, 0.12, 0.64, 0.04))
+        self.angle_slider = Slider(
+            ax=slider_axes,
+            label="θ (degrees / 度)",
+            valmin=0.0,
+            valmax=360.0,
+            valinit=initial_angle_deg,
+            valstep=1.0,
+        )
+        self.angle_slider.on_changed(self._on_slider_changed)
+
+        # Keep Button objects on self; otherwise they can be garbage-collected.
+        # Buttonをselfに保持しないと、ガベージコレクションされる場合があります。
+        self.preset_buttons: list[Button] = []
+        for index, angle in enumerate((30.0, 45.0, 90.0)):
+            button_axes = self.figure.add_axes((0.31 + index * 0.13, 0.035, 0.10, 0.045))
+            button = Button(button_axes, f"{angle:.0f}°")
+            button.on_clicked(lambda _event, preset=angle: self.set_angle(preset))
+            self.preset_buttons.append(button)
+
+        self.axes.legend(loc="lower left", fontsize=9)
+        self._update(initial_angle_deg)
+
+    def _configure_axes(self) -> None:
+        """Configure axes and draw the fixed radius-L reference circle.
+
+        座標軸を設定し、固定された半径Lの参照円を描画します。
+        """
+        limit = self.link_length * 1.25
+        self.axes.set(
+            xlim=(-limit, limit),
+            ylim=(-limit, limit),
+            aspect="equal",
+            xlabel="x",
+            ylabel="y",
+            title="One-link planar robot arm / 1リンク平面ロボットアーム",
+        )
+        self.axes.axhline(0.0, color="0.65", linewidth=1)
+        self.axes.axvline(0.0, color="0.65", linewidth=1)
+        self.axes.grid(True, linestyle=":", alpha=0.45)
+        self.axes.add_patch(
+            Circle(
+                (0.0, 0.0),
+                radius=self.link_length,
+                fill=False,
+                linestyle=":",
+                linewidth=2,
+                color="0.45",
+                label="radius L / 半径Lの円",
+            )
+        )
+
+    def _on_slider_changed(self, theta_deg: float) -> None:
+        """Update the drawing when the Slider value changes.
+
+        Sliderの値が変わったときに描画を更新します。
+        """
+        self._update(theta_deg)
+
+    def _update(self, theta_deg: float) -> None:
+        """Apply one forward-kinematics result to every moving artist.
+
+        1回の順運動学の計算結果を、動くすべての描画要素へ反映します。
+        """
+        # This is the causal bridge from the angle to the visible arm position.
+        # ここが「角度」から「目に見えるアーム位置」への因果関係をつなぎます。
+        x, y = forward_kinematics_1link(self.link_length, theta_deg)
+        theta_rad = math.radians(theta_deg)
+        cos_theta = math.cos(theta_rad)
+        sin_theta = math.sin(theta_rad)
+
+        self.arm_line.set_data([0.0, x], [0.0, y])
+        self.endpoint_point.set_data([x], [y])
+        self.x_component_line.set_data([0.0, x], [0.0, 0.0])
+        self.y_component_line.set_data([x, x], [0.0, y])
+
+        self.info_text.set_text(
+            f"θ     = {theta_deg:6.1f}°\n"
+            f"cos θ = {cos_theta: .4f}\n"
+            f"sin θ = {sin_theta: .4f}\n"
+            f"x     = L cos θ = {x: .4f}\n"
+            f"y     = L sin θ = {y: .4f}"
+        )
+        self.endpoint_text.xy = (x, y)
+        self.endpoint_text.set_text(f"endpoint / 先端\n({x:.3f}, {y:.3f})")
+        self.figure.canvas.draw_idle()
+
+    def set_angle(self, theta_deg: float) -> None:
+        """Set the angle in degrees and update the Slider and drawing.
+
+        角度を度数法で設定し、Sliderと描画を更新します。
+        """
+        if not math.isfinite(theta_deg) or not 0.0 <= theta_deg <= 360.0:
+            raise ValueError("theta_deg must be from 0 to 360 / 角度は0〜360度にしてください")
+        self.angle_slider.set_val(theta_deg)
+
+    def show(self) -> None:
+        """Display the interactive Matplotlib window or Notebook output.
+
+        対話的なMatplotlibウィンドウまたはNotebook出力を表示します。
+        """
+        plt.show()
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -69,30 +223,21 @@ def build_parser() -> argparse.ArgumentParser:
     コマンドライン引数のパーサーを作成します。
     """
     parser = argparse.ArgumentParser(
-        description="Visualize a one-link planar arm / 1リンク平面アームを可視化します"
+        description="Visualize one-link forward kinematics / 1リンク順運動学を可視化します"
     )
-    parser.add_argument("--angle-deg", type=float, default=45.0, help="joint angle in degrees / 関節角（度）")
-    parser.add_argument("--length", type=float, default=1.0, help="link length / リンク長")
-    parser.add_argument(
-        "--save",
-        default="artifacts/one_link_arm.svg",
-        help="output SVG path / SVGの保存先",
-    )
+    parser.add_argument("--length", type=float, default=10.0, help="link length / リンク長")
+    parser.add_argument("--angle", type=float, default=30.0, help="initial angle in degrees / 初期角度（度）")
     return parser
 
 
 def main(argv: Sequence[str] | None = None) -> int:
-    """Run the command-line visualization.
+    """Launch the interactive one-link arm visualization.
 
-    コマンドライン可視化を実行します。
+    対話的な1リンクアーム可視化を起動します。
     """
     arguments = build_parser().parse_args(argv)
-    angle_radians = math.radians(arguments.angle_deg)
-    x, y = endpoint(angle_radians, arguments.length)
-    print(f"endpoint = ({x:.6f}, {y:.6f})")
-
-    output_path = save_svg(arguments.save, angle_radians, arguments.length)
-    print(f"saved = {output_path}")
+    visualizer = OneLinkArmVisualizer(arguments.length, arguments.angle)
+    visualizer.show()
     return 0
 
 
