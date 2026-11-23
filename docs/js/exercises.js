@@ -33,7 +33,7 @@
       theta1: 30,
       theta2: 45,
       delta: [5, 0],
-      look: "緑の目標点が、いまの手先から少し右（+x）にあること。",
+      look: "実験台で、緑の目標点がいまの手先から少し +x 方向にあること。",
       think: "この姿勢なら、1回の一次補正で残差はかなり小さくなるはずか？",
       hint: "θ₁=30°, θ₂=45°。ヤコビ行列は正則です。",
     },
@@ -44,7 +44,7 @@
       theta1: 0,
       theta2: 0,
       delta: [-5, 0],
-      look: "目標が最大到達円の内側にあること（緑の円の内側）。",
+      look: "実験台で、目標が最大到達円（薄い緑）の内側にあること。",
       think: "到達はできそうでも、伸ばし切りでは一次近似が効かないのでは？",
       hint: "θ₁=0°, θ₂=0°（特異姿勢）。幾何的には到達可能です。",
     },
@@ -55,7 +55,7 @@
       theta1: 0,
       theta2: 0,
       delta: [5, 0],
-      look: "目標が最大到達円の外側にあること。",
+      look: "実験台で、目標が最大到達円の外側にあること。",
       think: "これは一次近似の問題ではなく、そもそも届かないのでは？",
       hint: "目標は L₁+L₂ より外側で、到達不能です。",
     },
@@ -100,9 +100,9 @@
         this.angleControls.setAngles(30, 45, true);
         this._setProgress(
           "look",
-          "いまやること：右の手順で、図のどこを見るかを確認する。",
-          "青い上腕・オレンジ前腕・赤い手先を確認してください。",
-          "まだ動かさないでください。先に手順を読みます。"
+          "いまやること：実験台の図で肩・肘・手先を確認し、手順を読む",
+          "青＝上腕、オレンジ＝前腕、赤＝手先",
+          "まだ動かさないでください。先に手順パネルを読みます。"
         );
       } else {
         this.angleControls.setEnabled(false);
@@ -170,11 +170,11 @@
           <div class="step-card is-open" data-role="step-look">
             <h3><span class="step-num">1</span> まず図を見る</h3>
             ${this._cueBox(
-              "右の実験台で、肩（黒）・肘（紫）・手先（赤）の位置。",
+              "実験台で、肩（黒）・肘（紫）・手先（赤）の位置。",
               "θ₁=30°, θ₂=45° のとき、手先はだいたいどの象限にありそうか。",
               "下の「予想へ進む」を押す。"
             )}
-            <p>リンク長は L₁=${this.L1} mm、L₂=${this.L2} mm。初期角は θ₁=30°、θ₂=45° です。</p>
+            <p>L₁=${this.L1} mm、L₂=${this.L2} mm。初期角は θ₁=30°、θ₂=45°。</p>
             <details class="formula-details">
               <summary>式を見る（任意）</summary>
               <pre class="formula">x = L₁ cos θ₁ + L₂ cos(θ₁+θ₂)
@@ -213,12 +213,12 @@ y = L₁ sin θ₁ + L₂ sin(θ₁+θ₂)</pre>
           <div class="step-card" data-role="step-check" hidden>
             <h3><span class="step-num">3</span> 操作して確かめる</h3>
             ${this._cueBox(
-              "右の実験台の手先座標と、図上の赤い点。",
+              "実験台の手先座標と赤い点。",
               "予想と数値は一致したか。θ₁ と θ₂ を動かすと何が変わるか。",
               "スライダーか代表姿勢を試し、終わったら演習2へ。"
             )}
             <div class="live-box" data-role="predict-live">
-              <p>下のスライダーが使えるようになりました。代表姿勢でも切り替えられます。</p>
+              <p>左実験台のスライダーが使えるようになりました。代表姿勢でも切り替えられます。</p>
               <div class="preset-row" data-role="predict-presets"></div>
               <p data-role="predict-live-numbers"></p>
               <details class="explain">
@@ -243,8 +243,8 @@ y = L₁ sin θ₁ + L₂ sin(θ₁+θ₂)</pre>
         next.scrollIntoView({ behavior: "smooth", block: "nearest" });
         this._setProgress(
           "predict",
-          "いまやること：象限と x・y の大小を選んで予想を確定する。",
-          "図は参考に見てよいですが、まだスライダーは触らないでください。",
+          "いまやること：象限と x・y の大小を選んで予想を確定する",
+          "実験台は参考に見てよい。スライダーはまだ触らない",
           "まだロック中です。予想を先に出します。"
         );
       });
@@ -281,8 +281,8 @@ y = L₁ sin θ₁ + L₂ sin(θ₁+θ₂)</pre>
         check.scrollIntoView({ behavior: "smooth", block: "nearest" });
         this._setProgress(
           "check",
-          "いまやること：スライダーか代表姿勢で数値を確かめ、終わったら演習2へ。",
-          "手先の数字と赤い点が連動することを確認してください。",
+          "いまやること：実験台のスライダーで数値を確かめ、終わったら演習2へ",
+          "手先の数字と赤い点が連動することを確認",
           "操作して大丈夫です。"
         );
       });
@@ -351,9 +351,9 @@ y = L₁ sin θ₁ + L₂ sin(θ₁+θ₂)</pre>
       const progressStep = scenarioId === "bent" ? "correct" : "compare";
       this._setProgress(
         progressStep,
-        `いまやること：${sc.label}で予想を選び、「補正する」を押す。`,
-        sc.look + " スライダーはシナリオ固定のためロックされています。",
-        "演習2では角度は固定です。シナリオ切替だけで進めます。"
+        `いまやること：${sc.label}で予想を選び、補正する`,
+        sc.look,
+        "演習2では角度は固定。シナリオ切替だけで進めます。"
       );
     }
 
