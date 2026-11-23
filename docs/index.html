@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>2リンクアーム演習 — Robotics Math Study</title>
+    <meta
+      name="description"
+      content="肩・肘の角度と手先位置、5 mm 一次補正をブラウザで試す日本語教材。"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./css/style.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <h1>Robotics Math Study</h1>
+      <p class="tagline">
+        2リンク平面アームの順運動学と、手先 5 mm 移動に対する一次補正を、同じ画面で体験するブラウザ教材です。
+        Python 版と同じ式で計算し、初見でもブラウザだけで最後まで試せます。
+      </p>
+    </header>
+
+    <main class="layout">
+      <section class="stage" aria-label="アーム図と操作">
+        <div class="stage-toolbar">
+          <button type="button" class="btn active" data-exercise="predict">演習1：位置の予想</button>
+          <button type="button" class="btn" data-exercise="correct">演習2：5 mm 補正</button>
+        </div>
+        <div class="canvas-wrap">
+          <canvas id="arm-canvas" width="640" height="520" aria-label="2リンクアームの図"></canvas>
+        </div>
+        <div id="angle-controls">
+          <div class="control-row">
+            <label for="theta1-slider">θ₁</label>
+            <input
+              id="theta1-slider"
+              data-role="theta1-slider"
+              type="range"
+              min="-180"
+              max="180"
+              step="1"
+              value="30"
+            />
+            <input
+              data-role="theta1-input"
+              type="number"
+              min="-180"
+              max="180"
+              step="1"
+              value="30"
+              aria-label="肩角度（度）"
+            />
+          </div>
+          <div class="control-row">
+            <label for="theta2-slider">θ₂</label>
+            <input
+              id="theta2-slider"
+              data-role="theta2-slider"
+              type="range"
+              min="-150"
+              max="150"
+              step="1"
+              value="45"
+            />
+            <input
+              data-role="theta2-input"
+              type="number"
+              min="-150"
+              max="150"
+              step="1"
+              value="45"
+              aria-label="肘角度（度）"
+            />
+          </div>
+          <div class="pose-readout" data-role="pose-readout" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <aside class="side" aria-label="演習パネル">
+        <nav class="exercise-nav" aria-label="演習切り替え">
+          <button type="button" class="btn active" data-exercise="predict">演習1</button>
+          <button type="button" class="btn" data-exercise="correct">演習2</button>
+        </nav>
+        <div id="exercise-panel"></div>
+      </aside>
+    </main>
+
+    <section class="verify" id="verify-box" aria-label="Python照合"></section>
+
+    <footer class="site-footer">
+      <p>
+        図・スライダー・順運動学／ヤコビ計算は <code>docs/js/</code> の共通モジュールです。
+        次の演習を足すときも同じ <code>ArmView</code>・<code>AngleControls</code>・<code>RoboticsKinematics</code> を再利用できます。
+      </p>
+      <p>
+        ローカル確認: リポジトリ根から
+        <code>python3 -m http.server 8000 --directory docs</code>
+        → <code>http://127.0.0.1:8000/</code>
+      </p>
+    </footer>
+
+    <script src="./js/kinematics.js"></script>
+    <script src="./js/arm-view.js"></script>
+    <script src="./js/controls.js"></script>
+    <script src="./js/exercises.js"></script>
+    <script src="./js/app.js"></script>
+  </body>
+</html>
