@@ -27,9 +27,9 @@
 
     <main class="layout">
       <section class="stage" aria-label="アーム図と操作">
-        <div class="stage-toolbar">
-          <button type="button" class="btn active" data-exercise="predict">演習1：位置の予想</button>
-          <button type="button" class="btn" data-exercise="correct">演習2：5 mm 補正</button>
+        <div class="stage-toolbar" role="group" aria-label="演習切り替え">
+          <button type="button" class="btn active" data-exercise="predict" aria-pressed="true">演習1：位置の予想</button>
+          <button type="button" class="btn" data-exercise="correct" aria-pressed="false">演習2：5 mm 補正</button>
         </div>
         <div class="canvas-wrap">
           <canvas id="arm-canvas" width="640" height="520" aria-label="2リンクアームの図"></canvas>
@@ -83,8 +83,8 @@
 
       <aside class="side" aria-label="演習パネル">
         <nav class="exercise-nav" aria-label="演習切り替え">
-          <button type="button" class="btn active" data-exercise="predict">演習1</button>
-          <button type="button" class="btn" data-exercise="correct">演習2</button>
+          <button type="button" class="btn active" data-exercise="predict" aria-pressed="true">演習1</button>
+          <button type="button" class="btn" data-exercise="correct" aria-pressed="false">演習2</button>
         </nav>
         <div id="exercise-panel"></div>
       </aside>

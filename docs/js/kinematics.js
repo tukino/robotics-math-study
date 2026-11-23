@@ -150,40 +150,35 @@
     return r >= rMin - 1e-9 && r <= rMax + 1e-9;
   }
 
-  /** Python Case A〜D（L1=5, L2=4）の照合用期待値 */
+  /**
+   * Python `forward_kinematics_2link(5, 4, …)` の出力を固定した照合用期待値。
+   * JS 側で三角関数を再計算しない（式を同時に壊しても検出できるようにする）。
+   * 再生成: python3 -c "from robotics_math_study.kinematics import forward_kinematics_2link; …"
+   */
   const PYTHON_REFERENCE_CASES = {
-    A: { theta1: 0, theta2: 0, elbow: [5, 0], wrist: [9, 0] },
+    A: { theta1: 0, theta2: 0, elbow: [5.0, 0.0], wrist: [9.0, 0.0] },
     B: {
       theta1: 30,
       theta2: 0,
-      elbow: [5 * Math.cos(30 * DEG2RAD), 5 * Math.sin(30 * DEG2RAD)],
-      wrist: [
-        5 * Math.cos(30 * DEG2RAD) + 4 * Math.cos(30 * DEG2RAD),
-        5 * Math.sin(30 * DEG2RAD) + 4 * Math.sin(30 * DEG2RAD),
-      ],
+      elbow: [4.330127018922194, 2.4999999999999996],
+      wrist: [7.794228634059948, 4.499999999999999],
     },
     C: {
       theta1: 30,
       theta2: 45,
-      elbow: [5 * Math.cos(30 * DEG2RAD), 5 * Math.sin(30 * DEG2RAD)],
-      wrist: [
-        5 * Math.cos(30 * DEG2RAD) + 4 * Math.cos(75 * DEG2RAD),
-        5 * Math.sin(30 * DEG2RAD) + 4 * Math.sin(75 * DEG2RAD),
-      ],
+      elbow: [4.330127018922194, 2.4999999999999996],
+      wrist: [5.365403199332277, 6.363703305156273],
     },
     D: {
       theta1: 90,
       theta2: -45,
-      elbow: [5 * Math.cos(90 * DEG2RAD), 5 * Math.sin(90 * DEG2RAD)],
-      wrist: [
-        5 * Math.cos(90 * DEG2RAD) + 4 * Math.cos(45 * DEG2RAD),
-        5 * Math.sin(90 * DEG2RAD) + 4 * Math.sin(45 * DEG2RAD),
-      ],
+      elbow: [3.061616997868383e-16, 5.0],
+      wrist: [2.8284271247461907, 7.82842712474619],
     },
   };
 
   /**
-   * L1=5, L2=4 の代表姿勢で JS 計算が Python と同じか検証する。
+   * L1=5, L2=4 の代表姿勢で JS 計算が Python 固定期待値と一致するか検証する。
    * @returns {{ ok: boolean, rows: Array<object> }}
    */
   function verifyAgainstPython(tolerance = 1e-9) {

@@ -30,7 +30,9 @@
 
     function setActiveExercise(exerciseId) {
       document.querySelectorAll("[data-exercise]").forEach((b) => {
-        b.classList.toggle("active", b.getAttribute("data-exercise") === exerciseId);
+        const selected = b.getAttribute("data-exercise") === exerciseId;
+        b.classList.toggle("active", selected);
+        b.setAttribute("aria-pressed", selected ? "true" : "false");
       });
       controller.start(exerciseId);
     }
@@ -62,11 +64,11 @@
 
     box.innerHTML = `
       <h2>Python 版との照合（L₁=5, L₂=4）</h2>
-      <p>ブラウザの順運動学が <code>forward_kinematics_2link</code> および
-      <code>tests/test_two_link_kinematics.py</code> の代表姿勢と同じ値になることを確認します。
+      <p>ブラウザの順運動学を、Python <code>forward_kinematics_2link</code> から書き出した
+      <strong>固定数値</strong>（Case A〜D）と比較します。三角関数式を JS 内で再計算した期待値は使いません。
       演習画面のリンク長は見やすさのため 30 倍（150 mm / 120 mm）です。</p>
       <p class="verify-banner ${result.ok ? "ok" : "bad"}">
-        ${result.ok ? "照合 OK：Case A〜D が Python 期待値と一致しました。" : "照合 NG：差分があります。"}
+        ${result.ok ? "照合 OK：Case A〜D が Python 固定期待値と一致しました。" : "照合 NG：差分があります。"}
       </p>
       <div class="table-wrap">
         <table>

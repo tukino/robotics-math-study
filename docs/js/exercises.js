@@ -83,11 +83,13 @@
       this._correctionApplied = false;
       this._target = null;
       this._startPose = null;
-      this.angleControls.setEnabled(true);
       if (exerciseId === "predict") {
+        this.angleControls.setEnabled(true);
         this._renderPredict();
         this.angleControls.setAngles(30, 45, true);
       } else {
+        // 演習2はシナリオ固定。スライダーを動かすと開始姿勢と目標がずれるため無効化する。
+        this.angleControls.setEnabled(false);
         this._loadCorrectionScenario(this.correctionScenario);
       }
       this._syncArm();
@@ -97,9 +99,6 @@
       this._syncArm();
       if (this.currentId === "predict") {
         this._updatePredictLive(theta1, theta2);
-      } else if (this.currentId === "correct" && !this._correctionApplied) {
-        // スライダー操作で初期姿勢を変えた場合はシナリオの開始姿勢を更新しない
-        this._refreshCorrectionPanel();
       }
     }
 
@@ -339,10 +338,6 @@ y = L₁ sin θ₁ + L₂ sin(θ₁+θ₂)</pre>
       this.panel.querySelector('[data-action="reset-correct"]')?.addEventListener("click", () => {
         this._loadCorrectionScenario(this.correctionScenario);
       });
-    }
-
-    _refreshCorrectionPanel() {
-      // no-op placeholder for live slider during quiz; panel is scenario-driven
     }
 
     _applyCorrectionOnce(reachableExpected) {
