@@ -4,12 +4,21 @@
 (function () {
   "use strict";
 
+  function syncNowDoingBarHeight(bar) {
+    if (!bar) return;
+    const heightPx = Math.ceil(bar.getBoundingClientRect().height);
+    if (heightPx > 0) {
+      document.documentElement.style.setProperty("--now-doing-bar-height", `${heightPx}px`);
+    }
+  }
+
   function init() {
     const canvas = document.getElementById("arm-canvas");
     const controlsRoot = document.getElementById("angle-controls");
     const exercisePanel = document.getElementById("exercise-panel");
     const verifyBox = document.getElementById("verify-box");
     const nowDoing = document.getElementById("now-doing");
+    const nowDoingBar = document.querySelector(".now-doing-bar");
     const stageHint = document.getElementById("stage-hint");
     const controlsCaption = document.querySelector('[data-role="controls-caption"]');
 
@@ -46,7 +55,12 @@
         li.classList.toggle("is-done", idx >= 0 && idx < currentIndex);
       });
       if (nowDoing) nowDoing.textContent = message;
+      // 折り返しでバー高さが変わるので、次フレームで実測してオフセットを合わせる
+      requestAnimationFrame(() => syncNowDoingBarHeight(nowDoingBar));
     }
+
+    syncNowDoingBarHeight(nowDoingBar);
+    window.addEventListener("resize", () => syncNowDoingBarHeight(nowDoingBar));
 
     let hasStarted = false;
     function setActiveExercise(exerciseId, { scroll = true } = {}) {

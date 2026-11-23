@@ -65,7 +65,7 @@ a {
   z-index: 40;
   display: flex;
   align-items: center;
-  min-height: var(--now-doing-bar-height);
+  /* 高さは内容に任せ、実測値を JS が --now-doing-bar-height に反映する */
   padding: 0.45rem clamp(1rem, 3vw, 2rem);
   border-bottom: 1px solid rgba(15, 95, 117, 0.22);
   background: rgba(238, 246, 248, 0.96);
