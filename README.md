@@ -123,10 +123,54 @@ desk-mounted camera: `[L, 0]` stays fixed on the ruler while its horizontal and
 vertical desk components change. The following figures connect that observation
 to the matrix form and then add two transformed link vectors head-to-tail.
 
+## Browser lab (GitHub Pages)
+
+`docs/` contains a Japanese in-browser lab for the two-link planar arm. You can
+run both exercises without installing Python or Jupyter:
+
+1. Predict the wrist position from shoulder and elbow angles, then check with
+   the sliders
+2. Place a 5 mm wrist target, apply one linear joint correction, and inspect
+   the residual (compare a bent elbow with fully extended inward/outward cases)
+
+Drawing, sliders, forward kinematics, and the Jacobian step live in shared
+modules under `docs/js/` so later exercises can reuse them. The page footer
+cross-checks Cases A–D (`L1=5`, `L2=4`) against the Python implementation. The
+interactive arm uses a 30× scale (`150 mm` / `120 mm`) for readability.
+
+### Open locally
+
+```bash
+python3 -m http.server 8000 --directory docs
+```
+
+Then open `http://127.0.0.1:8000/`. Serving over HTTP is preferred over
+`file://`, matching how GitHub Pages hosts the site.
+
+To cross-check Cases A–D and the exercise-2 scenario numbers without a
+browser:
+
+```bash
+node docs/verify.cjs
+```
+
+### Publish with GitHub Pages
+
+1. Open the repository **Settings → Pages**
+2. Set Source to **Deploy from a branch**
+3. Choose branch `main` and folder `/docs`, then Save
+
+The public URL will look like:
+
+```text
+https://<user-or-org>.github.io/robotics-math-study/
+```
+
 ## Repository structure
 
 ```text
 robotics-math-study/
+├── docs/                      # Browser lab for GitHub Pages
 ├── examples/                  # Numerical checks and interactive lessons
 ├── notebooks/                 # Interactive, executable experiments
 ├── notes/                     # Explanations written in our own words

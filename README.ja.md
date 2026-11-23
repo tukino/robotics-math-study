@@ -118,10 +118,46 @@ jupyter lab notebooks/04_rotation_matrix_as_frame_transform.ipynb
 観察します。定規上では`[L, 0]`のまま、机上の横・縦成分だけが変わります。続く図で、
 この観察を行列形式へ結びつけ、最後に変換した2本のリンクベクトルを先端同士で足します。
 
+## ブラウザ教材（GitHub Pages）
+
+`docs/` に、2リンク平面アームの日本語ブラウザ教材があります。Python や Jupyter を入れなくても、同じ画面で次の2演習を試せます。
+
+1. 肩・肘の角度から手先位置を予想し、スライダーで確かめる
+2. 手先を 5 mm 動かす目標に対し、関節角を1回だけ一次補正して残差を見る（肘を曲げた姿勢／伸ばし切りの内側・外側を比較）
+
+図・スライダー・順運動学／ヤコビ計算は `docs/js/` の共通モジュールに切り出してあり、次の演習を足すときも再利用できます。ページ下部で Case A〜D（L₁=5, L₂=4）を Python 版と照合します。演習画面のリンク長は見やすさのため 30 倍（150 mm / 120 mm）です。
+
+### ローカルで開く
+
+```bash
+python3 -m http.server 8000 --directory docs
+```
+
+ブラウザで `http://127.0.0.1:8000/` を開きます。`file://` でも動作しますが、GitHub Pages と同じく HTTP で確認することを推奨します。
+
+順運動学の Case A〜D 照合と演習2シナリオの数値確認だけを行う場合:
+
+```bash
+node docs/verify.cjs
+```
+
+### GitHub Pages で公開する
+
+1. GitHub リポジトリの **Settings → Pages**
+2. Source を **Deploy from a branch** にする
+3. Branch を `main`、フォルダを `/docs` にして Save
+
+公開後の URL は次の形式です。
+
+```text
+https://<user-or-org>.github.io/robotics-math-study/
+```
+
 ## リポジトリ構成
 
 ```text
 robotics-math-study/
+├── docs/                      # GitHub Pages 向けブラウザ教材
 ├── examples/                  # 数値確認と対話的な学習例
 ├── notebooks/                 # 対話的で実行可能な実験
 ├── notes/                     # 自分の言葉で書いた説明
