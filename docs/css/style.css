@@ -20,6 +20,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* sticky いまやることバーの下にスクロール位置を合わせる */
+  scroll-padding-top: 4.5rem;
 }
 
 body {
@@ -315,6 +317,13 @@ a {
   color: var(--accent);
   font-weight: 700;
   font-size: 0.8rem;
+}
+
+.step-card,
+.live-box,
+.quiz,
+#exercise-panel {
+  scroll-margin-top: 4.5rem;
 }
 
 .step-card {
