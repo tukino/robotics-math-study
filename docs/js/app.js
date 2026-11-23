@@ -55,6 +55,8 @@
         li.classList.toggle("is-done", idx >= 0 && idx < currentIndex);
       });
       if (nowDoing) nowDoing.textContent = message;
+      // ResizeObserver 非対応時でも、文言折り返し後の高さをすぐ反映する
+      requestAnimationFrame(() => syncNowDoingBarHeight(nowDoingBar));
     }
 
     // 折り返し・フォント読込・リサイズでバー高さが変わったらオフセットを追従させる
