@@ -289,11 +289,11 @@ y = L₁ sin θ₁ + L₂ sin(θ₁+θ₂)</pre>
           <pre class="formula">Δp ≈ J(θ) Δθ
 Δθ ≈ J(θ)⁻¹ Δp　（1回だけ解く）</pre>
 
-          <div class="scenario-tabs" data-role="scenario-tabs">
+          <div class="scenario-tabs" data-role="scenario-tabs" role="group" aria-label="補正シナリオ">
             ${Object.values(CORRECTION_SCENARIOS)
               .map(
                 (s) =>
-                  `<button type="button" class="btn ${s.id === sc.id ? "primary" : ""}" data-scenario="${s.id}">${s.label}</button>`
+                  `<button type="button" class="btn ${s.id === sc.id ? "primary" : ""}" data-scenario="${s.id}" aria-pressed="${s.id === sc.id ? "true" : "false"}">${s.label}</button>`
               )
               .join("")}
           </div>
