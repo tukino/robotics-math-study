@@ -18,47 +18,54 @@ if (!verify.ok) {
 }
 console.log("JS vs fixed Python constants OK (Cases A–D, L1=5, L2=4)");
 
+function isPythonUnavailable(result) {
+  if (result.error && (result.error.code === "ENOENT" || result.error.code === "ENOTDIR")) {
+    return true;
+  }
+  const detail = `${result.stderr || ""}\n${result.error || ""}`;
+  return /python3: (not found|No such file)|Unable to find|command not found/i.test(detail);
+}
+
 function runLivePythonCheck() {
+  const repoRoot = path.resolve(__dirname, "..");
+  // Load kinematics.py directly so package __init__ (and NumPy) are not required.
+  const kinematicsPath = path
+    .join(repoRoot, "src", "robotics_math_study", "kinematics.py")
+    .replace(/\\/g, "/");
   const script = `
-from robotics_math_study.kinematics import forward_kinematics_2link
-import json
+import importlib.util, json, sys
+spec = importlib.util.spec_from_file_location("rms_kinematics", ${JSON.stringify(kinematicsPath)})
+mod = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(mod)
 cases = {"A": (0,0), "B": (30,0), "C": (30,45), "D": (90,-45)}
 out = {}
 for name, (t1, t2) in cases.items():
-    p = forward_kinematics_2link(5, 4, t1, t2)
+    p = mod.forward_kinematics_2link(5, 4, t1, t2)
     out[name] = {
         "elbow": list(p["elbow_world"]),
         "wrist": list(p["wrist_world"]),
     }
 print(json.dumps(out))
 `;
-  const repoRoot = path.resolve(__dirname, "..");
-  const srcPath = path.join(repoRoot, "src");
-  const env = {
-    ...process.env,
-    PYTHONPATH: process.env.PYTHONPATH
-      ? `${srcPath}${path.delimiter}${process.env.PYTHONPATH}`
-      : srcPath,
-  };
   const result = spawnSync("python3", ["-c", script], {
     cwd: repoRoot,
     encoding: "utf8",
-    env,
   });
   if (result.status !== 0) {
-    // Optional when Python / NumPy are unavailable; fixed JS checks still run.
-    console.warn(
-      "Live Python check skipped:",
-      (result.stderr || result.error || "").toString().trim() || `exit ${result.status}`
-    );
-    return;
+    const detail = (result.stderr || result.error || "").toString().trim() || `exit ${result.status}`;
+    if (isPythonUnavailable(result)) {
+      console.warn("Live Python check skipped: python3 unavailable:", detail);
+      return;
+    }
+    console.error("Live Python check FAILED:", detail);
+    process.exit(1);
   }
   let live;
   try {
     live = JSON.parse(result.stdout);
   } catch (err) {
-    console.warn("Live Python check skipped: could not parse Python output");
-    return;
+    console.error("Live Python check FAILED: could not parse Python output");
+    process.exit(1);
   }
   for (const [name, expected] of Object.entries(K.PYTHON_REFERENCE_CASES)) {
     const pose = K.forwardKinematics2Link(5, 4, expected.theta1, expected.theta2);
