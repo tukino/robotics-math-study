@@ -14,16 +14,11 @@
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="./css/style.css?v=3" />
+    <link rel="stylesheet" href="./css/style.css?v=8" />
   </head>
   <body>
     <header class="site-header">
-      <div class="header-top">
-        <p class="brand">Robotics Math Study</p>
-        <p class="now-doing" id="now-doing" aria-live="polite">
-          いまやること：実験台の図で肩・肘・手先を確認する
-        </p>
-      </div>
+      <p class="brand">Robotics Math Study</p>
       <h1>2リンクアームを、予想してから動かす</h1>
       <ol class="progress-steps" id="progress-bar" aria-label="学習の進み具合">
         <li data-step="look" class="is-current"><span>1</span>見る</li>
@@ -33,6 +28,12 @@
         <li data-step="compare"><span>5</span>比較</li>
       </ol>
     </header>
+
+    <div class="now-doing-bar" role="status">
+      <p class="now-doing" id="now-doing" aria-live="polite">
+        いまやること：実験台の図で肩・肘・手先を確認する
+      </p>
+    </div>
 
     <main class="layout">
       <section class="stage" aria-label="アーム図と操作">
@@ -110,10 +111,10 @@
       <p>図・スライダー・計算は <code>docs/js/</code> の共通モジュールです。</p>
     </footer>
 
-    <script src="./js/kinematics.js?v=3"></script>
-    <script src="./js/arm-view.js?v=3"></script>
-    <script src="./js/controls.js?v=3"></script>
-    <script src="./js/exercises.js?v=3"></script>
-    <script src="./js/app.js?v=3"></script>
+    <script src="./js/kinematics.js?v=4"></script>
+    <script src="./js/arm-view.js?v=4"></script>
+    <script src="./js/controls.js?v=4"></script>
+    <script src="./js/exercises.js?v=4"></script>
+    <script src="./js/app.js?v=7"></script>
   </body>
 </html>

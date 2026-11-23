@@ -4,12 +4,21 @@
 (function () {
   "use strict";
 
+  function syncNowDoingBarHeight(bar) {
+    if (!bar) return;
+    const heightPx = Math.ceil(bar.getBoundingClientRect().height);
+    if (heightPx > 0) {
+      document.documentElement.style.setProperty("--now-doing-bar-height", `${heightPx}px`);
+    }
+  }
+
   function init() {
     const canvas = document.getElementById("arm-canvas");
     const controlsRoot = document.getElementById("angle-controls");
     const exercisePanel = document.getElementById("exercise-panel");
     const verifyBox = document.getElementById("verify-box");
     const nowDoing = document.getElementById("now-doing");
+    const nowDoingBar = document.querySelector(".now-doing-bar");
     const stageHint = document.getElementById("stage-hint");
     const controlsCaption = document.querySelector('[data-role="controls-caption"]');
 
@@ -46,6 +55,20 @@
         li.classList.toggle("is-done", idx >= 0 && idx < currentIndex);
       });
       if (nowDoing) nowDoing.textContent = message;
+      // ResizeObserver 非対応時でも、文言折り返し後の高さをすぐ反映する
+      requestAnimationFrame(() => syncNowDoingBarHeight(nowDoingBar));
+    }
+
+    // 折り返し・フォント読込・リサイズでバー高さが変わったらオフセットを追従させる
+    syncNowDoingBarHeight(nowDoingBar);
+    if (nowDoingBar && typeof ResizeObserver !== "undefined") {
+      const observer = new ResizeObserver(() => syncNowDoingBarHeight(nowDoingBar));
+      observer.observe(nowDoingBar);
+    } else {
+      window.addEventListener("resize", () => syncNowDoingBarHeight(nowDoingBar));
+    }
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => syncNowDoingBarHeight(nowDoingBar));
     }
 
     let hasStarted = false;

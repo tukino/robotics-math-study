@@ -10,6 +10,8 @@
   --shadow: 0 8px 24px rgba(27, 36, 48, 0.07);
   --font-sans: "IBM Plex Sans JP", "Noto Sans JP", "Hiragino Sans", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  /* sticky いまやることバー高さ（padding + 1行テキスト + border） */
+  --now-doing-bar-height: 2.75rem;
 }
 
 *,
@@ -20,6 +22,8 @@
 
 html {
   scroll-behavior: smooth;
+  /* sticky いまやることバーの下にスクロール位置を合わせる */
+  scroll-padding-top: var(--now-doing-bar-height);
 }
 
 body {
@@ -41,17 +45,8 @@ a {
   background: rgba(255, 255, 255, 0.85);
 }
 
-.header-top {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem 1rem;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 0.35rem;
-}
-
 .brand {
-  margin: 0;
+  margin: 0 0 0.25rem;
   font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -64,14 +59,27 @@ a {
   font-weight: 700;
 }
 
+.now-doing-bar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  /* 高さは内容に任せ、実測値を JS が --now-doing-bar-height に反映する */
+  padding: 0.45rem clamp(1rem, 3vw, 2rem);
+  border-bottom: 1px solid rgba(15, 95, 117, 0.22);
+  background: rgba(238, 246, 248, 0.96);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 14px rgba(27, 36, 48, 0.06);
+}
+
 .now-doing {
   margin: 0;
-  padding: 0.4rem 0.7rem;
-  max-width: min(40rem, 100%);
-  background: #eef6f8;
-  border: 1px solid rgba(15, 95, 117, 0.28);
-  font-size: 0.92rem;
-  font-weight: 600;
+  padding: 0;
+  max-width: 56rem;
+  font-size: 0.95rem;
+  font-weight: 700;
+  line-height: 1.35;
 }
 
 .progress-steps {
@@ -265,8 +273,8 @@ a {
 .side {
   padding: 0.75rem 0.9rem 1rem;
   position: sticky;
-  top: 0.5rem;
-  max-height: calc(100vh - 1rem);
+  top: var(--now-doing-bar-height);
+  max-height: calc(100vh - var(--now-doing-bar-height));
   overflow: auto;
 }
 
