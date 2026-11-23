@@ -55,12 +55,19 @@
         li.classList.toggle("is-done", idx >= 0 && idx < currentIndex);
       });
       if (nowDoing) nowDoing.textContent = message;
-      // 折り返しでバー高さが変わるので、次フレームで実測してオフセットを合わせる
-      requestAnimationFrame(() => syncNowDoingBarHeight(nowDoingBar));
     }
 
+    // 折り返し・フォント読込・リサイズでバー高さが変わったらオフセットを追従させる
     syncNowDoingBarHeight(nowDoingBar);
-    window.addEventListener("resize", () => syncNowDoingBarHeight(nowDoingBar));
+    if (nowDoingBar && typeof ResizeObserver !== "undefined") {
+      const observer = new ResizeObserver(() => syncNowDoingBarHeight(nowDoingBar));
+      observer.observe(nowDoingBar);
+    } else {
+      window.addEventListener("resize", () => syncNowDoingBarHeight(nowDoingBar));
+    }
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(() => syncNowDoingBarHeight(nowDoingBar));
+    }
 
     let hasStarted = false;
     function setActiveExercise(exerciseId, { scroll = true } = {}) {
