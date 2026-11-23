@@ -10,6 +10,8 @@
   --shadow: 0 8px 24px rgba(27, 36, 48, 0.07);
   --font-sans: "IBM Plex Sans JP", "Noto Sans JP", "Hiragino Sans", sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  /* sticky いまやることバー高さ（padding + 1行テキスト + border） */
+  --now-doing-bar-height: 2.75rem;
 }
 
 *,
@@ -21,7 +23,7 @@
 html {
   scroll-behavior: smooth;
   /* sticky いまやることバーの下にスクロール位置を合わせる */
-  scroll-padding-top: 4.5rem;
+  scroll-padding-top: var(--now-doing-bar-height);
 }
 
 body {
@@ -61,7 +63,10 @@ a {
   position: sticky;
   top: 0;
   z-index: 40;
-  padding: 0.55rem clamp(1rem, 3vw, 2rem);
+  display: flex;
+  align-items: center;
+  min-height: var(--now-doing-bar-height);
+  padding: 0.45rem clamp(1rem, 3vw, 2rem);
   border-bottom: 1px solid rgba(15, 95, 117, 0.22);
   background: rgba(238, 246, 248, 0.96);
   backdrop-filter: blur(8px);
@@ -74,7 +79,7 @@ a {
   max-width: 56rem;
   font-size: 0.95rem;
   font-weight: 700;
-  line-height: 1.45;
+  line-height: 1.35;
 }
 
 .progress-steps {
@@ -268,8 +273,8 @@ a {
 .side {
   padding: 0.75rem 0.9rem 1rem;
   position: sticky;
-  top: 4.25rem; /* below sticky いまやること bar */
-  max-height: calc(100vh - 4.75rem);
+  top: var(--now-doing-bar-height);
+  max-height: calc(100vh - var(--now-doing-bar-height));
   overflow: auto;
 }
 
@@ -319,11 +324,11 @@ a {
   font-size: 0.8rem;
 }
 
+/* html の scroll-padding-top と二重にならないよう、内側ステップだけ余白を付ける */
 .step-card,
 .live-box,
-.quiz,
-#exercise-panel {
-  scroll-margin-top: 4.5rem;
+.quiz {
+  scroll-margin-top: var(--now-doing-bar-height);
 }
 
 .step-card {
