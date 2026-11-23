@@ -218,7 +218,7 @@ y = L₁ sin θ₁ + L₂ sin(θ₁+θ₂)</pre>
               "スライダーか代表姿勢を試し、終わったら演習2へ。"
             )}
             <div class="live-box" data-role="predict-live">
-              <p>左実験台のスライダーが使えるようになりました。代表姿勢でも切り替えられます。</p>
+              <p>実験台のスライダーが使えるようになりました。代表姿勢でも切り替えられます。</p>
               <div class="preset-row" data-role="predict-presets"></div>
               <p data-role="predict-live-numbers"></p>
               <details class="explain">
