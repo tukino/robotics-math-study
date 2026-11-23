@@ -18,25 +18,52 @@
   </head>
   <body>
     <header class="site-header">
-      <h1>Robotics Math Study</h1>
+      <p class="brand">Robotics Math Study</p>
+      <h1>2リンクアームを、予想してから動かす</h1>
       <p class="tagline">
-        2リンク平面アームの順運動学と、手先 5 mm 移動に対する一次補正を、同じ画面で体験するブラウザ教材です。
-        Python 版と同じ式で計算し、初見でもブラウザだけで最後まで試せます。
+        左側の「手順」が本編、右側の「実験台」が図です。いま読む欄だけ進めれば、最後までブラウザだけで完走できます。
       </p>
+      <ol class="path-overview">
+        <li><strong>演習1</strong> … 角度を見て手先位置を予想し、図で確かめる</li>
+        <li><strong>演習2</strong> … 手先を 5 mm 動かしたいとき、1回の角度補正でどこまで届くかを比べる</li>
+      </ol>
     </header>
 
+    <div class="progress-bar" id="progress-bar" aria-label="学習の進み具合">
+      <ol class="progress-steps">
+        <li data-step="look" class="is-current"><span>1</span>見る</li>
+        <li data-step="predict"><span>2</span>予想する</li>
+        <li data-step="check"><span>3</span>確かめる</li>
+        <li data-step="correct"><span>4</span>5 mm 補正</li>
+        <li data-step="compare"><span>5</span>比較する</li>
+      </ol>
+      <p class="now-doing" id="now-doing" aria-live="polite">
+        いまやること：右の手順の「見てほしいもの」から始めてください。
+      </p>
+    </div>
+
     <main class="layout">
+      <aside class="side" aria-label="手順パネル">
+        <p class="panel-label">手順（ここを読む）</p>
+        <div id="exercise-panel"></div>
+      </aside>
+
       <section class="stage" aria-label="アーム図と操作">
-        <div class="stage-toolbar" role="group" aria-label="演習切り替え">
-          <button type="button" class="btn active" data-exercise="predict" aria-pressed="true">演習1：位置の予想</button>
-          <button type="button" class="btn" data-exercise="correct" aria-pressed="false">演習2：5 mm 補正</button>
+        <div class="stage-header">
+          <p class="panel-label">実験台（図と数値）</p>
+          <p class="stage-hint" id="stage-hint">
+            青いリンクが上腕、オレンジが前腕。赤い点が手先です。
+          </p>
         </div>
         <div class="canvas-wrap">
           <canvas id="arm-canvas" width="640" height="520" aria-label="2リンクアームの図"></canvas>
         </div>
         <div id="angle-controls">
+          <p class="controls-caption" data-role="controls-caption">
+            角度スライダーは、手順で「操作してよい」と出るまで待ってください。
+          </p>
           <div class="control-row">
-            <label for="theta1-slider">θ₁</label>
+            <label for="theta1-slider">θ₁ 肩</label>
             <input
               id="theta1-slider"
               data-role="theta1-slider"
@@ -57,7 +84,7 @@
             />
           </div>
           <div class="control-row">
-            <label for="theta2-slider">θ₂</label>
+            <label for="theta2-slider">θ₂ 肘</label>
             <input
               id="theta2-slider"
               data-role="theta2-slider"
@@ -80,27 +107,16 @@
           <div class="pose-readout" data-role="pose-readout" aria-live="polite"></div>
         </div>
       </section>
-
-      <aside class="side" aria-label="演習パネル">
-        <nav class="exercise-nav" aria-label="演習切り替え">
-          <button type="button" class="btn active" data-exercise="predict" aria-pressed="true">演習1</button>
-          <button type="button" class="btn" data-exercise="correct" aria-pressed="false">演習2</button>
-        </nav>
-        <div id="exercise-panel"></div>
-      </aside>
     </main>
 
-    <section class="verify" id="verify-box" aria-label="Python照合"></section>
+    <details class="verify" id="verify-box">
+      <summary>参考：Python 版との数値照合（学習後で十分）</summary>
+      <div data-role="verify-body"></div>
+    </details>
 
     <footer class="site-footer">
       <p>
-        図・スライダー・順運動学／ヤコビ計算は <code>docs/js/</code> の共通モジュールです。
-        次の演習を足すときも同じ <code>ArmView</code>・<code>AngleControls</code>・<code>RoboticsKinematics</code> を再利用できます。
-      </p>
-      <p>
-        ローカル確認: リポジトリ根から
-        <code>python3 -m http.server 8000 --directory docs</code>
-        → <code>http://127.0.0.1:8000/</code>
+        図・スライダー・計算は <code>docs/js/</code> の共通モジュールです。次の演習を足すときも再利用できます。
       </p>
     </footer>
 
