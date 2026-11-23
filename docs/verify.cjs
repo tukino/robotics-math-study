@@ -32,13 +32,22 @@ for name, (t1, t2) in cases.items():
     }
 print(json.dumps(out))
 `;
+  const repoRoot = path.resolve(__dirname, "..");
+  const srcPath = path.join(repoRoot, "src");
+  const env = {
+    ...process.env,
+    PYTHONPATH: process.env.PYTHONPATH
+      ? `${srcPath}${path.delimiter}${process.env.PYTHONPATH}`
+      : srcPath,
+  };
   const result = spawnSync("python3", ["-c", script], {
-    cwd: path.resolve(__dirname, ".."),
+    cwd: repoRoot,
     encoding: "utf8",
+    env,
   });
   if (result.status !== 0) {
-    console.warn("Live Python check skipped:", (result.stderr || result.error || "").toString().trim());
-    return;
+    console.error("Live Python check FAILED:", (result.stderr || result.error || "").toString().trim());
+    process.exit(1);
   }
   const live = JSON.parse(result.stdout);
   for (const [name, expected] of Object.entries(K.PYTHON_REFERENCE_CASES)) {
