@@ -324,13 +324,6 @@ a {
   font-size: 0.8rem;
 }
 
-/* html の scroll-padding-top と二重にならないよう、内側ステップだけ余白を付ける */
-.step-card,
-.live-box,
-.quiz {
-  scroll-margin-top: var(--now-doing-bar-height);
-}
-
 .step-card {
   margin-top: 0.7rem;
   padding: 0.7rem 0.75rem;
