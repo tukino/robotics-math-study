@@ -95,7 +95,7 @@
       ctx.clearRect(0, 0, w, h);
 
       // 紙面背景
-      ctx.fillStyle = "#f3f0e8";
+      ctx.fillStyle = "#edf2f6";
       ctx.fillRect(0, 0, w, h);
       this._drawGrid();
 

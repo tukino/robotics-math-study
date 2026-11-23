@@ -40,7 +40,7 @@
     function updateProgress(step, message) {
       const order = ["look", "predict", "check", "correct", "compare"];
       const currentIndex = order.indexOf(step);
-      document.querySelectorAll(".progress-steps li").forEach((li) => {
+      document.querySelectorAll("#progress-bar li").forEach((li) => {
         const idx = order.indexOf(li.getAttribute("data-step"));
         li.classList.toggle("is-current", idx === currentIndex);
         li.classList.toggle("is-done", idx >= 0 && idx < currentIndex);
