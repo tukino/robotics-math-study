@@ -8,7 +8,7 @@
 
 - 順運動学本体：`src/robotics_math_study/kinematics.py` の `forward_kinematics_2link`
 - 同式のブラウザ実装：`docs/js/kinematics.js` の `forwardKinematics2Link`
-- 代表姿勢（Case A〜C）：`tests/test_two_link_kinematics.py`、`two_link_frames.py` の `cases`
+- 代表姿勢：`two_link_frames.py` の `cases`（A〜D）。座標の数値回帰は `tests/test_two_link_kinematics.py`（Case A/C）
 
 ---
 
@@ -49,7 +49,7 @@
 
 ## 3. 3姿勢と記録欄
 
-教材 Case に揃えると、基準→肩だけ→肘だけが一本の線になる。
+基準・肩だけ・肘だけの3姿勢を、教材 Case と対応づけて比較する。
 
 | 姿勢 | θ₁ | θ₂ | 意図 | 教材との対応 |
 | --- | ---: | ---: | --- | --- |
@@ -97,7 +97,7 @@ x_theory, y_theory = pose["wrist_world"]
 | 手先の理論座標 | 戻り値 `wrist_world` | 同上 |
 | 肘の理論座標（任意検算） | 戻り値 `elbow_world` | 同上 |
 | 同式の可視化 | `TwoLinkFrameVisualizer` / Case A–D | `src/robotics_math_study/two_link_frames.py` |
-| 数値回帰 | Case A/B/C の期待値 | `tests/test_two_link_kinematics.py` |
+| 数値回帰 | Case A/C の座標期待値 | `tests/test_two_link_kinematics.py` |
 
 P0 / P2 は `theta_1_deg` / `theta_2_deg` だけ表どおりに変える。単位を mm に揃えれば、戻り値の (x, y) も mm で実測と比較できる。
 
